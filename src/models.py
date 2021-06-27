@@ -14,33 +14,39 @@ class User(Base):
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
     user_name = Column(String(250), nullable=False)
-    first_name = Column(String(250))
-    last_name = Column(String(250))
-    email = Column(String(250), unique=True)
+    first_name = Column(String(250), nullable=False)
+    last_name = Column(String(250), nullable=False)
+    email = Column(String(250), nullable=False, unique=True)
 
 class Follower(Base):
     __tablename__ = 'follower'
-    user_from_id = Column(Integer, ForeignKey('user.id'))
-    user_to_id = Column(Integer, ForeignKey('user.id'))
+    user_from_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    user_to_id = Column(Integer, ForeignKey('post.id'), primary_key=True)
+    user = relationship(User)
+    user_to = relationship(Post)
 
 class Media(Base):
     __tablename__ = 'media'
     id = Column(Integer, primary_key=True)
-    Type = Column(String)
-    url = Column(String)
-    post_id = (Integer, ForeignKey('post.id'))
+    Type = Column(String(250))
+    url = Column(String(250))
+    post_id = Column(Integer, ForeignKey('post.id'))
+    user = relationship(Post)
 
 class Post(Base):
     __tablename__ = 'post'
     id = Column(Integer, primary_key=True)
     user_id = Colum(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
 class Comment(Base):
     __tablename__ = 'comment'
     id = Column(Integer, primary_key=True)
-    comment_text = Column(String)
+    comment_text = Column(String(250))
     author_id = Column(Integer, ForeignKey('user.id'))
-    post_id = Column(Integer, ForeignKey('post.id'))    
+    post_id = Column(Integer, ForeignKey('post.id')) 
+    user = relationship(User)
+    post = relationship(Post)   
 
     def to_dict(self):
         return {}
